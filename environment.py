@@ -7,7 +7,13 @@ Q_table = torch.full((len(bandits),), 20.0)  # Initialize Q-values to zero
 N_table = torch.zeros(len(bandits))
 
 for i in range(500):
-    bandit = bandits[np.argmax(Q_table)]
+    epsilon = 0.1  # Epsilon-greedy parameter
+    if np.random.rand() < epsilon:
+        # Explore: choose a random bandit
+        bandit = np.random.choice(bandits)
+    else:
+        # Exploit: choose the bandit with the highest Q-value
+        bandit = bandits[np.argmax(Q_table)]
     reward = bandit.pull()
     N_table[np.argmax(Q_table)] += 1
     Q_table[np.argmax(Q_table)] += (reward - Q_table[np.argmax(Q_table)]) / N_table[np.argmax(Q_table)]
